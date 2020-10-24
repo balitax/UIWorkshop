@@ -8,9 +8,12 @@
 import AsyncDisplayKit
 
 class ProductCardWishlistNode: ASDisplayNode {
+    
     let backgroundNode: ASDisplayNode
     let activeNode: ASImageNode
     let inactiveNode: ASImageNode
+    var isWhishlist = false
+    
     
     override init() {
         backgroundNode = ASDisplayNode()
@@ -27,14 +30,30 @@ class ProductCardWishlistNode: ASDisplayNode {
         
         super.init()
         automaticallyManagesSubnodes = true
+        
+        
+        activeNode.addTarget(self, action: #selector(self.changeWishlistState), forControlEvents: .touchUpInside)
+        inactiveNode.addTarget(self, action: #selector(self.changeWishlistState), forControlEvents: .touchUpInside)
+        
     }
     
-    @objc func changeWishlistState() { }
+    @objc func changeWishlistState() {
+        isWhishlist.toggle()
+        setNeedsLayout()
+    }
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
+        
+        var child: ASImageNode
+        if isWhishlist {
+            child = activeNode
+        } else {
+            child = inactiveNode
+        }
+        
         let wishlistInset = ASInsetLayoutSpec(
             insets: UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2),
-            child: activeNode
+            child: child
         )
         
         return ASBackgroundLayoutSpec(
